@@ -1,11 +1,6 @@
 'use strict';
 
 const connectDB = require('../db/handle');
-const CREDIT    = 0;
-const DEBIT     = 1;
-const CASH      = 0;
-const BANK      = 1;
-const EWALLET   = 2;
 
 connectDB.connect(function(err)
 {
@@ -13,12 +8,90 @@ connectDB.connect(function(err)
     console.log('Connected to database.');
 });
 
+function wait(time)
+{
+    return new Promise(r => setTimeout(r, time));
+}
+
 module.exports = function(app)
 {
-    app.get('/api/v1/transactions', (req, res) => {});
-    app.get('/api/v1/summary', (req, res) => {});
-    app.post('/api/v1/transaction', (req, res) => {});
-    app.post('/api/v1/summary', (req, res) => {});
-    app.delete('/api/v1/transaction', (req, res) => {});
+    app.get('/api/v1/transactions', async (req, res) => 
+    {
+        const { id } = req.body;
+        let sqlQuery = `SELECT * FROM transactions WHERE user_id=${id};`
+        let data;        
+
+        connectDB.query(sqlQuery, (err, result) => 
+        {
+            if(err) throw err;
+            data = result;
+        });
+
+        await wait(100);
+
+        res.status(200).send(data);
+    });
+
+    app.get('/api/v1/summary', async (req, res) => 
+    {
+        const { id } = req.body;
+        let sqlQuery = `SELECT * FROM summary WHERE user_id=${id};`;
+        let data;        
+
+        connectDB.query(sqlQuery, (err, result) => 
+        {
+            if(err) throw err;
+            data = result;
+        });
+
+        await wait(100);
+
+        res.status(200).send(data);
+    });
+
+    app.post('/api/v1/transaction', async (req, res) => 
+    {
+        const { id, description, type, mode, value } = req.body;
+        let sqlQuery = `INSERT INTO transactions (user_id, description, transaction_type, transaction_mode, transaction_value) VALUES (${id}, \"${description}\", ${type}, ${mode}, ${value});`;
+
+        connectDB.query(sqlQuery, (err, result) =>
+        {
+            if(err) throw err;
+        });
+
+        await wait(100);
+
+        res.status(201).send('Transaction added');
+    });
+
+    app.post('/api/v1/summary', async (req, res) => 
+    {
+        const { id, cash, bank, ewallet, total} = req.body;
+        let sqlQuery = `DELETE FROM summary WHERE user_id=${id}; INSERT INTO summary (${id}, ${cash}, ${bank}, ${total});`;
+        
+        connectDB.query(sqlQuery, (err, result) =>
+        {
+            if(err) throw err;
+        });
+
+        await wait(100);
+
+        res.status(201).send('Summary added/updated');
+    });
+
+    app.delete('/api/v1/transaction', async (req, res) => 
+    {
+        const { transaction_id } = req.body;
+        let sqlQuery = `DELETE FROM transactions WHERE transaction_id=${id};`;
+
+        connectDB.query(sqlQuery, (err, result) =>
+        {
+            if(err) throw err;
+        });
+
+        await wait(100);
+
+        res.status(204).send('Summary added/updated');
+    });
 }
 
