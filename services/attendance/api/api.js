@@ -1,8 +1,12 @@
 'use strict';
 
-const databaseHandler = require('../models/database');
-const subjectModel = require('../models/subject');
-const detailsModel = require('../models/details');
+const connectDB = require('../db/handle');
+
+connectDB.connect(function(err)
+{
+    if(err) throw err;
+    console.log('Connected to database.');
+});
 
 function wait(time)
 {
@@ -11,109 +15,65 @@ function wait(time)
 
 module.exports = function(app)
 {
-    databaseHandler.establishConnection();
-    
-    app.get('/api/v1/subjects', async (req, res) => 
+    app.get('/api/v1/all', async (req, res) => 
     {
-        try 
-        {
-            let collect;
-            await subjectModel.find()
-                    .then(docs => collect = docs)
-                    .catch(err => console.log(err));
+        const { id } = req.body;
+        let sqlQuery = `SELECT * FROM attendance WHERE user_id=${id};`;
+        let data;        
 
-            res.status(200).send(collect);        
-        }
-        catch(err)
+        connectDB.query(sqlQuery, (err, result) => 
         {
-            res.status(500).json({ message: err.message });
-        }
-    });
+            if(err) throw err;
+            data = result;
+        });
 
-    app.post('/api/v1/subject', async (req, res) => 
-    {
-        try 
-        {
-            const { subjectName } = req.body;
-            let newSubjectCreator = new subjectModel({name: subjectName});
-            await newSubjectCreator.save();
-            res.status(201).send('Added new subject.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
+        await wait(100);
+
+        res.status(200).send(data);
     });
 
     app.post('/api/v1/data', async (req, res) => 
     {
-        try 
+        const { id, subject_name, date, status } = req.body;
+        let sqlQuery = `INSERT INTO attendance VALUES (${id}, \"${subject_name}\", \"${date}\", ${status});`;
+
+        connectDB.query(sqlQuery, (err, result) =>
         {
-            const { name, date, status } = req.body;
-            const detailsObject = new detailsModel({date, status});
-            await subjectModel.updateOne({name: name}, {$push: {details: detailsObject}});
-            res.status(201).send('Added new details.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
+            if(err) throw err;
+        });
+
+        await wait(100);
+
+        res.status(201).send('Attendance data added.');
     });
 
-    app.delete('/api/v1/subject', async (req, res) => 
+    app.put('/api/v1/data', async (req, res) => 
     {
-        try
+        const {attendance_id, subject_name, date, status } = req.body;
+        let sqlQuery = `UPDATE attendance SET subject_name=\"${subject_name}\", date=\"${date}\", status=${status} WHERE attendance_id=${attendance_id};`;
+
+        connectDB.query(sqlQuery, (err, result) =>
         {
-            const { name } = req.body;
-            await subjectModel.findOneAndRemove({name});
-            res.status(200).send('Deleted.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
+            if(err) throw err;
+        });
+
+        await wait(100);
+
+        res.status(201).send('Attendance data updated.');
     });
 
     app.delete('/api/v1/data', async (req, res) => 
     {
-        try
-        {
-            const { name, date, status } = req.body;
-            const detailsObject = new detailsModel({date, status});
-            await subjectModel.updateOne({name: name}, {$pull: {details: detailsObject}});
-            res.status(200).send('Deleted.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
-    });  
+        const { attendance_id } = req.body;
+        let sqlQuery = `DELETE FROM attendance WHERE attendance_id=${attendance_id};`;
 
-    app.put('/api/v1/modify/subject', async (req, res) => 
-    {
-        try
+        connectDB.query(sqlQuery, (err, result) =>
         {
-            const { oldName, newName } = req.body;
-            await subjectModel.updateOne({name: oldName}, {name: newName});
-            res.status(201).send('Updated.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
-    });
+            if(err) throw err;
+        });
 
-    app.put('/api/v1/modify/data', async (req, res) => 
-    {
-        try
-        {
-            const { name, date, status } = req.body;
-            await subjectModel.updateOne({name: name, date: date, status: status}, {'details.$.date': date, 'details.$.status': status});
-            res.status(201).send('Updated.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
+        await wait(100);        
+
+        res.status(202).send('Attendance data deleted.');
     });
-};
+}

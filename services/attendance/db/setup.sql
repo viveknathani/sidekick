@@ -1,0 +1,10 @@
+CREATE DATABASE SIDEKICK_ATTENDANCE;
+USE SIDEKICK_ATTENDANCE;
+
+CREATE TABLE attendance(
+    attendance_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    subject_name VARCHAR(255),
+    date DATE,
+    status INT
+);
