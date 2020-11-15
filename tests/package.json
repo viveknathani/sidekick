@@ -1,0 +1,16 @@
+{
+  "name": "tests",
+  "version": "1.0.0",
+  "description": "tests for sidekick services",
+  "main": "test.js",
+  "scripts": {
+    "test-auth": "npx mocha test.js auth"
+  },
+  "author": "viveknathani",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
+    "supertest": "^6.0.1"
+  }
+}
