@@ -1,114 +1,79 @@
 'use strict';
 
-const databaseHandler = require('../models/database');
-const subjectModel = require('../models/subject');
-const detailsModel = require('../models/details');
+const connectDB = require('../db/handle');
+
+connectDB.connect(function(err)
+{
+    if(err) throw err;
+    console.log('Connected to database.');
+});
+
+function wait(time)
+{
+    return new Promise(r => setTimeout(r, time));
+}
 
 module.exports = function(app)
 {
-    databaseHandler.establishConnection();
-
-    app.get('/api/v1/subjects', (req, res) => 
+    app.get('/api/v1/all', async (req, res) => 
     {
-        try 
-        {
-            let collect;
-            await subjectModel.find()
-                    .then(docs => collect = docs)
-                    .catch(err => console.log(err));
+        const { id } = req.body;
+        let sqlQuery = `SELECT * FROM grades WHERE user_id=${id};`;
+        let data;        
 
-            res.status(200).send(collect);        
-        }
-        catch(err)
+        connectDB.query(sqlQuery, (err, result) => 
         {
-            res.status(500).json({ message: err.message });
-        }
+            if(err) throw err;
+            data = result;
+        });
+
+        await wait(100);
+
+        res.status(200).send(data);
     });
 
-    app.post('/api/v1/subject', (req, res) => 
+    app.post('/api/v1/test', async (req, res) => 
     {
-        try 
+        const { id, subject_name, date, max_marks, scored_marks } = req.body;
+        let sqlQuery = `INSERT INTO grades VALUES (${id}, \"${subject_name}\", \"${date}\", ${max_marks}, ${scored_marks});`;
+
+        connectDB.query(sqlQuery, (err, result) =>
         {
-            const { subjectName } = req.body;
-            let newSubjectCreator = new subjectModel({name: subjectName});
-            await newSubjectCreator.save();
-            res.status(201).send('Added new subject.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
+            if(err) throw err;
+        });
+
+        await wait(100);
+
+        res.status(201).send('Test data added.');
     });
 
-    app.post('/api/v1/test', (req, res) => 
+    app.put('/api/v1/test', async (req, res) => 
     {
-        try 
+        const {grades_id, subject_name, date, max_marks, scored_marks } = req.body;
+        let sqlQuery = `UPDATE grades SET subject_name=\"${subject_name}\", date=\"${date}\", max_marks=${max_marks}, scored_marks=${scored_marks} WHERE grades_id=${grades_id};`;
+
+        connectDB.query(sqlQuery, (err, result) =>
         {
-            const { name, date, description, maxMarks, scoredMarks } = req.body;
-            const detailsObject = new detailsModel({date, description, maxMarks, scoredMarks});
-            await subjectModel.updateOne({name: name}, {$push: {details: detailsObject}});
-            res.status(201).send('Added new details.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
+            if(err) throw err;
+        });
+
+        await wait(100);
+
+        res.status(201).send('Test data updated.');
     });
 
-    app.delete('/api/v1/subject', (req, res) => 
+    app.delete('/api/v1/test', async (req, res) => 
     {
-        try
-        {
-            const { name } = req.body;
-            await subjectModel.findOneAndRemove({name});
-            res.status(200).send('Deleted.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
-    });
+        const { grades_id } = req.body;
+        let sqlQuery = `DELETE FROM grades WHERE grades_id=${gradfes_id};`;
 
-    app.delete('/api/v1/test', (req, res) => 
-    {
-        try
+        connectDB.query(sqlQuery, (err, result) =>
         {
-            const { name, date, description, maxMarks, scoredMarks } = req.body;
-            const detailsObject = new detailsModel({date, description, maxMarks, scoredMarks});
-            await subjectModel.updateOne({name: name}, {$pull: {details: detailsObject}});
-            res.status(200).send('Deleted.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
-    });  
+            if(err) throw err;
+        });
 
-    app.put('/api/v1/modify/subject', (req, res) => 
-    {
-        try
-        {
-            const { oldName, newName } = req.body;
-            await subjectModel.updateOne({name: oldName}, {name: newName});
-            res.status(201).send('Updated.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
-    });
+        await wait(100);        
 
-    app.put('/api/v1/modify/test', (req, res) => 
-    {
-        try
-        {
-            const { name, date, description, maxMarks, scoredMarks } = req.body;
-            await subjectModel.updateOne({name: name, date: date}, {'details.$.date': date, 'details.$.description': description, 'details.$.maxMarks': maxMarks, 'details.$.scoredMarks': scoredMarks});
-            res.status(201).send('Updated.');
-        }
-        catch(err)
-        {
-            res.status(500).json({ message: err.message });
-        }
+        res.status(202).send('Test data deleted.');
     });
-}; 
+}
