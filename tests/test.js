@@ -1,5 +1,5 @@
-const auth = require('./auth');
-const expenses = require('./expenses');
+const auth = require('./src/auth');
+const expenses = require('./src/expenses');
 const service = process.argv[3];
 
 if(service === 'auth')
