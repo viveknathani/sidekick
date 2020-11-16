@@ -6,7 +6,8 @@
   "scripts": {
     "test-auth": "npx mocha test.js src/auth",
     "test-exp" : "npx mocha test.js src/expenses",
-    "test-attend" : "npx mocha test.js src/attendance"
+    "test-attend" : "npx mocha test.js src/attendance",
+    "test-grades" : "npx mocha test.js src/grades"
   },
   "author": "viveknathani",
   "license": "MIT",
