@@ -11,7 +11,7 @@ CREATE TABLE transactions(
 );
 
 CREATE TABLE summary(
-    user_id INT NOT NULL,
+    user_id INT NOT NULL PRIMARY KEY,
     cash REAL,
     bank REAL,
     ewallet REAL,

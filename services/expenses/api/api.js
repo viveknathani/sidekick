@@ -67,7 +67,7 @@ module.exports = function(app)
     app.post('/api/v1/summary', async (req, res) => 
     {
         const { id, cash, bank, ewallet, total} = req.body;
-        let sqlQuery = `DELETE FROM summary WHERE user_id=${id}; INSERT INTO summary (${id}, ${cash}, ${bank}, ${total});`;
+        let sqlQuery = `INSERT INTO summary VALUES(${id}, ${cash}, ${bank}, ${ewallet}, ${total}) ON DUPLICATE KEY UPDATE cash=${cash}, bank=${bank}, ewallet=${ewallet}, total=${total};`;
         
         connectDB.query(sqlQuery, (err, result) =>
         {
