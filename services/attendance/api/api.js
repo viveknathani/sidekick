@@ -35,7 +35,7 @@ module.exports = function(app)
     app.post('/api/v1/data', async (req, res) => 
     {
         const { id, subject_name, date, status } = req.body;
-        let sqlQuery = `INSERT INTO attendance VALUES (${id}, \"${subject_name}\", \"${date}\", ${status});`;
+        let sqlQuery = `INSERT INTO attendance (user_id, subject_name, date, status) VALUES (${id}, \"${subject_name}\", \"${date}\", ${status});`;
 
         connectDB.query(sqlQuery, (err, result) =>
         {
