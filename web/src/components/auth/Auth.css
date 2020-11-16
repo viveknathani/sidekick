@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+body{
+    background-color: #121212;
+    font-family: 'Roboto', sans-serif;
+}
+
+#auth_main
+{
+    background-color: #222222;
+    height: 35%;
+    width: 15%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+#auth_main #top{
+    text-align: center;
+    margin: 0;
+}
+
+#auth_main #top #signup, #auth_main #top #login{
+    font-weight: bold;
+    font-size: 25px;
+    padding: 4%;
+    background-color: black;
+    color: white;
+    border: none;
+    width: 50%;
+}
+
+#auth_main #top #signup{
+    float: left;
+}
+
+#auth_main #top #login{
+    float: right;
+    background-color: #3700B3;
+    color: black;
+}
+
+#auth_main #top #login:hover, #auth_main #top #signup:hover, #bottom #submit:hover{
+    opacity: 75%;
+    cursor: pointer;
+}
+
+*:focus{
+    outline: none;
+}
+
+#auth_main #mid{
+    text-align: center;
+    margin-top: 50%;
+}
+
+input{
+    background-color: transparent;
+    margin: 4%;
+    font-size: 20px;
+    border: none;
+    color: white;
+}
+
+#bottom{
+    text-align: center;
+    margin-top: 20%;
+}
+
+#bottom #submit{
+    text-align: center;
+    background-color: #03DAC6;
+    border: none;
+    font-size: 25px;
+    padding: 4%;
+    border-radius: 4%;
+    font-weight: bold;
+    text-transform: lowercase;
+}
