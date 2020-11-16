@@ -4,8 +4,9 @@
   "description": "tests for sidekick services",
   "main": "test.js",
   "scripts": {
-    "test-auth": "npx mocha test.js auth",
-    "test-exp" : "npx mocha test.js expenses"
+    "test-auth": "npx mocha test.js src/auth",
+    "test-exp" : "npx mocha test.js src/expenses",
+    "test-attend" : "npx mocha test.js src/attendance"
   },
   "author": "viveknathani",
   "license": "MIT",
