@@ -35,7 +35,7 @@ module.exports = function(app)
     app.post('/api/v1/test', async (req, res) => 
     {
         const { id, subject_name, date, max_marks, scored_marks } = req.body;
-        let sqlQuery = `INSERT INTO grades VALUES (${id}, \"${subject_name}\", \"${date}\", ${max_marks}, ${scored_marks});`;
+        let sqlQuery = `INSERT INTO grades (user_id, subject_name, date, max_marks, scored_marks) VALUES (${id}, \"${subject_name}\", \"${date}\", ${max_marks}, ${scored_marks});`;
 
         connectDB.query(sqlQuery, (err, result) =>
         {
