@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-color: #121212;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+}
+
+#attend_main{
+    background-color: #222222;
+    padding: 20px;
+    width: 25%;
+    height: 28%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+#attend_title{
+    font-weight: bolder;
+    font-size: 2rem;
+    margin-top: 7%;
+}
+
+#attend_summary{
+    background-color: #00BFA5;
+    color: black;
+    padding: 2%;
+    font-size: 2.5em;
+    width: 30%;
+    margin-top: 5%;
+}
+
+#a_s_head{
+    font-weight: bold;
+    margin-bottom: 2%;
+}
+
+#attend_form{
+    background-color: #00B8D4;
+    color: black;
+    width: 40%;
+    padding: 2%;
+    font-size: larger;
+    float: right;
+    margin-top: -31%;
+}
+
+#attend_form input{
+    outline: 0;
+    border-width: 0 0 2px;
+    border-color: black;
+    background-color: transparent;
+}
+
+#set_status{
+    margin-top: 5%;
+}
+
+#set_status label{
+    padding: 2%;
+}
+
+#attend_form button{
+    background-color: #00C853;
+    border-radius: 100px;
+    margin-top: 4%;
+    margin-bottom: -3%;
+    padding: 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-color: transparent;
+    margin-left: 30%;
+}
+
+#attend_form button:hover, #attend_main #show:hover{
+    opacity: 75%;
+    cursor: pointer;
+}
+
+#attend_main #show{
+    background-color: #FFAB00;
+    padding: 12px;
+    font-size: 1rem;
+    border-color: transparent;
+    font-weight: bold;
+    width: 34%;
+    margin-top: 5%;
+    border-radius: 100px;
+}
+
+#a_f_head{
+    font-weight: bold;
+    margin-bottom: 2%;
+}
+
+#attend_popup
+{
+    color: black;
+    display: none;
+    padding: 10px;
+    width: 1000px;
+    height: 50%;
+    margin-top: -100px;
+    background: #FFF;
+    border: 3px solid;
+    z-index: 20;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 25%;
+    overflow-y: scroll;
+}
+
+#attend_popup::after
+{
+    position: fixed;
+    content: "";
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -2;
+}
+
+#attend_popup::before
+{
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: #FFF;
+    z-index: -1;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+border: 1px solid #dddddd;
+text-align: left;
+padding: 8px;
+}
+
+tr:nth-child(even) {
+background-color: #dddddd;
+}
