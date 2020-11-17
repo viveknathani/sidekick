@@ -1,4 +1,5 @@
 import React from 'react';
+import './Expenses.css';
 
 const CASH = 0, BANK = 1, EWALLET = 2;
 const DEBIT = 0, CREDIT = 1;
@@ -16,6 +17,8 @@ function radioInput(radioName)
 }
 
 function getID(id) { return document.getElementById(id); }
+function show(id)  { getID(id).style.display="block"; }
+function hide(id)  { getID(id).style.display="none"; }
 
 class Expenses extends React.Component
 {
@@ -29,6 +32,9 @@ class Expenses extends React.Component
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.conductTransaction = this.conductTransaction.bind(this);
+        this.deleteTransaction = this.deleteTransaction.bind(this);
+        this.show = this.show.bind(this);
+        this.hide = this.hide.bind(this);
     }
 
     conductTransaction = (transaction) => {
@@ -78,55 +84,87 @@ class Expenses extends React.Component
         const ttype = parseInt(radioInput("ttype").value);
         const medium = parseInt(radioInput("medium").value);
         const desc = getID("desc").value;
+        console.log(ttype);
 
         const newTransaction = { amount: amount, medium: medium, ttype: ttype, desc: desc };
         this.conductTransaction(newTransaction);
+        setTimeout(()=>console.log(this.state), 1000)
     }
+
+    show = (id) => { getID(id).style.display="block"; }
+    hide = (id) => { getID(id).style.display="none"; }
 
     render()
     {
         return(
             <div>
                <div id="exp_main">
+                   <div id="exp_title">
+                        <p>Expenses</p>
+                   </div>
                    <div id="exp_summary">
+                       <p id="exp_s_head">Summary</p>
                        <p>Cash : {this.state.summary.cash}</p>
                        <p>Bank : {this.state.summary.bank}</p>
                        <p>Ewallet : {this.state.summary.ewallet}</p>
                    </div>
 
                    <div id="exp_form">
+                        <p id="exp_f_head">New transaction</p>
                         <label for="amount">Amount</label>
                         <input id="amount" name="amount"></input>
 
                         <label for="desc">Description</label>
                         <input id="desc" name="desc"></input>
-
+                        
+                        <div id="set_ttype">
+                        <p>Transaction type</p>
                         <label for="debit">Debit</label>
                         <input type="radio" name="ttype" id="debit" value={DEBIT}></input>
                         <label for="credit">Credit</label>
                         <input type="radio" name="ttype" id="credit" value={CREDIT}></input>
+                        </div>
 
+                        <div id="set_medium">
+                        <p>Transaction medium</p>
                         <label for="cash">Cash</label>
                         <input type="radio" name="medium" id="cash" value={CASH}></input>
                         <label for="bank">Bank</label>
                         <input type="radio" name="medium" id="bank" value={BANK}></input>
                         <label for="ewallet">Ewallet</label>
                         <input type="radio" name="medium" id="ewallet" value={EWALLET}></input>
+                        </div>
 
-                        <button type="submit" onClick={this.handleSubmit}>Submit</button>
+                        <button type="submit" onClick={this.handleSubmit}>submit</button> 
                    </div>
+                    <button id="show" href="#" onClick={() => { this.show("exp_popup")}}>show list</button>
 
-                   <div id="exp_list">
-                       <ol>
-                           {this.state.transactions.map(
+                   <div id="exp_popup">
+                        <p>Transaction list</p>
+                        <table>
+                            <tr>
+                                <th>Index</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Medium</th>
+                                <th>Delete</th>
+                            </tr>
+                            {this.state.transactions.map(
                                (transaction, index) => (
-                                   <li key={index}>
-                                       {transaction.amount} &nbsp; {transaction.ttype} &nbsp; {transaction.medium} &nbsp; {transaction.desc} &nbsp; {index}
-                                       <button onClick={() => this.deleteTransaction(index)}>delete</button>
-                                   </li>
+                                   <tr>
+                                        <td>{index}</td>
+                                        <td>{transaction.amount}</td>
+                                        <td>{transaction.desc}</td>
+                                        <td>{transaction.ttype}</td>
+                                        <td>{transaction.medium}</td>
+                                        <td><button onClick={() => this.deleteTransaction(index)}>Delete</button></td>
+                                   </tr>
                                )
                            )}
-                       </ol>
+
+                        </table>
+                       <a href="#" onClick={() => { this.hide("exp_popup")}}>Close</a>
                    </div>
                </div>
             </div>
