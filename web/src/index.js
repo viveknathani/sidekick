@@ -1,13 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import Auth from './components/auth/Auth';
-//import Expenses from './components/expenses/Expenses';
-//import Attend from './components/attendance/Attend';
-import Grades from './components/grades/Grades';
+import App from './components/App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Grades/>
+    <App/>
   </React.StrictMode>,
   document.getElementById('root')
 );
