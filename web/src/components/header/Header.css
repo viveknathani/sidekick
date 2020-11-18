@@ -1,0 +1,30 @@
+#sidekick_head{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #222222;
+}
+
+p{
+    padding: 1%;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 0.2rem;
+}
+
+ul{
+    float: right;
+    margin-right: 5%;
+    font-size: 1rem;
+    margin-top: -2.5%;
+}
+
+ul li{
+    display: inline;
+    padding: 5%;   
+}
+
+.Link{
+    text-decoration: none;
+    color: white;
+}
