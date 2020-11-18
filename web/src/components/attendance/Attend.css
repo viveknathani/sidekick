@@ -13,10 +13,10 @@ body{
 
 #attend_main{
     background-color: #222222;
-    padding: 20px;
+    padding: 10px;
     width: 25%;
     height: 28%;
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     top: 0;
@@ -26,17 +26,18 @@ body{
 
 #attend_title{
     font-weight: bolder;
-    font-size: 2rem;
-    margin-top: 7%;
+    font-size: 2em;
+    margin-top: 4%;
 }
+
 
 #attend_summary{
     background-color: #00BFA5;
     color: black;
     padding: 2%;
-    font-size: 2.5em;
+    font-size: 2rem;
     width: 30%;
-    margin-top: 5%;
+    margin-top: 4%;
 }
 
 #a_s_head{
@@ -44,14 +45,18 @@ body{
     margin-bottom: 2%;
 }
 
+
 #attend_form{
     background-color: #00B8D4;
     color: black;
+    position: absolute;
+    right:0;
     width: 40%;
     padding: 2%;
-    font-size: larger;
-    float: right;
-    margin-top: -31%;
+    font-size: 1rem;
+    top: 0;
+    margin-top: 4%;
+    margin-right: 3%;
 }
 
 #attend_form input{
@@ -61,11 +66,17 @@ body{
     background-color: transparent;
 }
 
-#set_status{
+
+#set_ttype, #set_medium{
     margin-top: 5%;
 }
 
-#set_status label{
+#a_f_head{
+    font-weight: bold;
+    margin-bottom: 2%;
+}
+
+#set_ttype label, #set_medium label{
     padding: 2%;
 }
 
@@ -93,13 +104,8 @@ body{
     border-color: transparent;
     font-weight: bold;
     width: 34%;
-    margin-top: 5%;
+    margin-top: 4%;
     border-radius: 100px;
-}
-
-#a_f_head{
-    font-weight: bold;
-    margin-bottom: 2%;
 }
 
 #attend_popup
@@ -162,4 +168,28 @@ padding: 8px;
 
 tr:nth-child(even) {
 background-color: #dddddd;
+}
+
+@media (max-height: 917px){
+    #attend_main{
+        height: 50%;
+    }
+}
+
+@media (max-width: 1657px){
+    #attend_main{
+        width: 30%;
+    }
+}
+
+@media (max-width: 1366px){
+    #attend_main{
+        width: 50%;
+    }
+}
+
+@media (max-width: 900px){
+    #attend_main{
+        width: 60%;
+    }
 }

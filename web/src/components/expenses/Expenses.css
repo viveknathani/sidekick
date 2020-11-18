@@ -13,10 +13,10 @@ body{
 
 #exp_main{
     background-color: #222222;
-    padding: 20px;
+    padding: 10px;
     width: 25%;
-    height: 32%;
-    position: absolute;
+    height: 30%;
+    position: fixed;
     left: 0;
     right: 0;
     top: 0;
@@ -26,32 +26,38 @@ body{
 
 #exp_title{
     font-weight: bolder;
-    font-size: 2rem;
-    margin-top: 7%;
+    font-size: 2em;
+    margin-top: 4%;
 }
+
 
 #exp_summary{
     background-color: #00BFA5;
     color: black;
     padding: 2%;
-    font-size: larger;
+    font-size: 1rem;
     width: 30%;
     margin-top: 4%;
 }
+
 
 #exp_s_head{
     font-weight: bold;
     margin-bottom: 2%;
 }
 
+
 #exp_form{
     background-color: #00B8D4;
     color: black;
-    width: 50%;
+    position: absolute;
+    right:0;
+    width: 40%;
     padding: 2%;
-    font-size: larger;
-    float: right;
-    margin-top: -43%;
+    font-size: 1rem;
+    top: 0;
+    margin-top: 4%;
+    margin-right: 3%;
 }
 
 #exp_form input{
@@ -60,6 +66,7 @@ body{
     border-color: black;
     background-color: transparent;
 }
+
 
 #set_ttype, #set_medium{
     margin-top: 5%;
@@ -89,14 +96,6 @@ body{
 #exp_form button:hover, #exp_main #show:hover{
     opacity: 75%;
     cursor: pointer;
-}
-
-#exp_b_list{
-    background-color: #4E342E;
-    width: 30%;
-    padding: 2%;
-    text-align: center;
-    margin-top: 30%;
 }
 
 #exp_main #show{
@@ -170,4 +169,28 @@ padding: 8px;
 
 tr:nth-child(even) {
 background-color: #dddddd;
+}
+
+@media (max-height: 917px){
+    #exp_main{
+        height: 50%;
+    }
+}
+
+@media (max-width: 1657px){
+    #exp_main{
+        width: 30%;
+    }
+}
+
+@media (max-width: 1366px){
+    #exp_main{
+        width: 50%;
+    }
+}
+
+@media (max-width: 900px){
+    #exp_main{
+        width: 60%;
+    }
 }
