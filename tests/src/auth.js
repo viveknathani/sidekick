@@ -1,7 +1,8 @@
 const supertest = require('supertest');
-const PATH      = 'http://localhost:8080/api/v1';
-const SIGNUP    = '/signup';
-const LOGIN     = '/login';
+const PATH      = 'http://localhost:4000';
+const SIGNUP    = '/auth/signup';
+const LOGIN     = '/auth/login';
+const TOKEN     = '/auth/verifyToken'; 
 const REQUEST   = supertest(PATH);
 
 function randomString(len)
@@ -25,8 +26,13 @@ function signup(email, password)
             REQUEST
                 .post(SIGNUP)
                 .send({email, password})
-                .expect(201, 'Added user.')
-                .end((err, res) => { if(err){ throw err;} else { done(); } });
+                .end((err, res) => {
+                        if (err) { throw err; }
+                        else {
+                            console.log({ status: res.status, content: res.body });
+                            done();
+                        }
+                    })              
         });
     });
 }
@@ -40,16 +46,42 @@ function login(email, password)
             REQUEST
                 .post(LOGIN)
                 .send({email, password})
-                .expect(200, 'Logged in')
-                .end((err, res) => { if(err){ throw err;} else { done(); } });
+                .end((err, res) => {
+                    if (err) { throw err; }
+                    else {
+                        console.log({ status: res.status, content: res.body });
+                        tokenVerification(res.body.token);
+                        done();
+                    }
+                })   
         });
+    });
+}
+
+function tokenVerification(token)
+{
+    describe('Send token.', () => 
+    {
+        it('Should return 200', function(done)
+        {
+            REQUEST
+                .post(TOKEN)
+                .send({token})
+                .end((err, res) => {
+                    if (err) { throw err; }
+                    else {
+                        console.log({ status: res.status, content: res.body });
+                        done();
+                    }
+                })   
+        })
     });
 }
 
 function start()
 {
-    const email    = randomString(10) + '@gmail.com';
-    const password = randomString(8)  + 'a1B'; 
+    const email    = randomString(8) + 'v2@gmail.com'
+    const password = randomString(8) + 'v2'; 
     signup(email, password);
     login(email, password);
 }
