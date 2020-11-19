@@ -50,11 +50,14 @@ module.exports = function(app)
     */
     app.post('/api/v1/signup', async (req, res) => 
     {
+        console.log('Auth service : /api/v1/signup');
         const { email, password } = req.body;
+        console.log(req.body);
 
         const validResult = validator.validateUser(email, password);
         if(!(validResult.emailRes === 'OK' && validResult.passwordRes === 'OK'))
         {
+            console.log(validResult);
             res.status(400).send(validResult);
             return;
         }
@@ -62,7 +65,7 @@ module.exports = function(app)
         let userExists = await checkExistence(email);
         if(userExists)
         {
-            res.status(302).send("User exists.");
+            res.status(302).send({message: "User exists."});
             return;
         }
 
@@ -74,7 +77,7 @@ module.exports = function(app)
         {
             if(err) throw err;
         })
-        res.status(201).send("Added user.");
+        res.status(201).send({message: "Added user."});
     });
 
     /* 
@@ -86,12 +89,13 @@ module.exports = function(app)
     */
     app.post('/api/v1/login', async (req, res) => 
     {
+        console.log('Auth service : /api/v1/login');
         const { email, password } = req.body;
         let userExists = await checkExistence(email);
 
         if(!userExists)
         {
-            res.status(404).send('User does not exist.');
+            res.status(404).send({message: 'User does not exist.'});
             return;
         }
 
@@ -109,21 +113,32 @@ module.exports = function(app)
         if(isGood)
         {
             const token = createToken(userID);
-            res.cookie('jwt', token, { httpOnly: true, maxAge: AGE * 1000});
-            res.status(200).send('Logged in');
+            console.log({token});
+            res.status(200).send({token});
         }
 
         else 
         {
-            res.status(400).send('Incorrect password');
+            res.status(400).send({message: 'Incorrect password'});
         }
     });
 
-    /* 
-        Just replace the cookie.
-    */
+    app.post('/api/v1/verifyToken', async (req, res) => 
+    {
+        const { token } = req.body;
+        try 
+        {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            res.status(200).send({decoded});
+        }
+        catch(err)
+        {
+            res.status(400).send({err});
+        }
+    });
+
     app.get('/api/v1/logout', (req, res) => 
     {
-        res.cookie('jwt', '', { httpOnly: true, maxAge: 1});
+        res.status(200).send({token: ''});
     });
 };
