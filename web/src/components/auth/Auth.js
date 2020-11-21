@@ -4,6 +4,7 @@ import './Auth.css';
 const LOGIN  = 0;
 const SIGNUP = 1;
 let selected = LOGIN;
+const commonHeaders  =  { 'Content-Type': 'application/json' }
 
 function selectLogin()
 {
@@ -23,14 +24,36 @@ function selectSignup()
     document.getElementById("login").style.color = "#FFFFFF";
 }
 
-function submitData()
-{
-    document.getElementById("server_response").innerText = "Please wait...";
-    document.getElementById("server_response").style.color = "white";
-}
 
 class Auth extends React.Component
 {
+    constructor(props)
+    {
+        super(props);
+        this.submitData = this.submitData.bind(this);
+    }
+
+    async submitData()
+    {
+        document.getElementById("server_response").innerText = "Please wait...";
+        document.getElementById("server_response").style.color = "white";
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if(selected === SIGNUP)
+        {
+            let response = await fetch('/auth/signup', {
+                method: 'POST',
+                headers: commonHeaders,
+                body: JSON.stringify({email, password})
+            });
+            if(response.status === 201) 
+            {
+                document.getElementById("server_response").innerText = "Success!";
+            }
+        }
+    }
+
     render()
     {
         return(
@@ -43,13 +66,13 @@ class Auth extends React.Component
 
                     <div id="mid">
                         <form>
-                            <input placeholder="email" ></input>
-                            <input placeholder="password" type="password"></input>
+                            <input placeholder="email" id="email"></input>
+                            <input placeholder="password" type="password" id="password"></input>
                         </form>
                         <p id="server_response"></p>
                     </div>
                     <div id="bottom">
-                        <button id="submit" onClick={submitData}>submit</button>
+                        <button id="submit" onClick={this.submitData}>submit</button>
                     </div>
                 </div>
             </div>
