@@ -1,5 +1,5 @@
 const supertest     = require('supertest');
-const PATH          = 'http://localhost:8082/api/v1';
+const PATH          = 'http://localhost:4000/attendance';
 const ALL           =  '/all';
 const SPECIFIC_DATA = '/data';
 const REQUEST       = supertest(PATH);

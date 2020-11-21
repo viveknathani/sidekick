@@ -1,5 +1,5 @@
 const supertest     = require('supertest');
-const PATH          = 'http://localhost:8083/api/v1';
+const PATH          = 'http://localhost:4000/grades';
 const ALL           =  '/all';
 const SPECIFIC_DATA = '/test';
 const REQUEST       = supertest(PATH);

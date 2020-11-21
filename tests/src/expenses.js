@@ -1,5 +1,5 @@
 const supertest     = require('supertest');
-const PATH          = 'http://localhost:8081/api/v1';
+const PATH          = 'http://localhost:4000/expenses';
 const SUMMARY       =  '/summary';
 const TRANSACTION   = '/transaction';
 const TRANSACTIONS  = '/transactions';

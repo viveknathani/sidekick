@@ -1,8 +1,8 @@
 const supertest = require('supertest');
-const PATH      = 'http://localhost:4000';
-const SIGNUP    = '/auth/signup';
-const LOGIN     = '/auth/login';
-const TOKEN     = '/auth/verifyToken'; 
+const PATH      = 'http://localhost:4000/auth';
+const SIGNUP    = '/signup';
+const LOGIN     = '/login';
+const TOKEN     = '/verifyToken'; 
 const REQUEST   = supertest(PATH);
 
 function randomString(len)
