@@ -48,4 +48,4 @@ $ npm run test-attend
 $ npm run test-grades
 ```
 ### License
-
+[**MIT**](https://github.com/viveknathani/sidekick/blob/master/LICENSE) 
