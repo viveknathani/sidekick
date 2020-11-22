@@ -17,82 +17,159 @@ function radioInput(radioName)
 }
 
 function getID(id) { return document.getElementById(id); }
-function show(id)  { getID(id).style.display="block"; }
-function hide(id)  { getID(id).style.display="none"; }
+
+const commonHeaders  =  { 'Content-Type': 'application/json' }
 
 class Expenses extends React.Component
 {
     constructor(props)
     {
         super(props);
-        this.state = { 
-            summary : { cash : 0, bank : 0, ewallet: 0 }, 
-            transactions: [] 
+        this.state = {
+            summary: { cash: 0, bank: 0, ewallet : 0},
+            transactions: []
         }
-
+        this.getAllData = this.getAllData.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.conductTransaction = this.conductTransaction.bind(this);
-        this.deleteTransaction = this.deleteTransaction.bind(this);
+        this.deleteButton = this.deleteButton.bind(this);
         this.show = this.show.bind(this);
         this.hide = this.hide.bind(this);
     }
 
-    conductTransaction = (transaction) => {
-        let amount = transaction.amount;
-        const medium = transaction.medium;
-        const ttype  = transaction.ttype;
-        const desc = transaction.desc;
-        if(ttype === DEBIT) { amount = amount * -1; }
-
-        let stateCash = this.state.summary.cash;
-        let stateBank = this.state.summary.bank;
-        let stateEwallet   = this.state.summary.ewallet;
-        if(medium === CASH) { stateCash = stateCash + amount; }
-        if(medium === BANK) { stateBank = stateBank + amount; }
-        if(medium === EWALLET) { stateEwallet = stateEwallet + amount; }
-
-        const newSummaryObject = { cash: stateCash, bank: stateBank, ewallet: stateEwallet, desc: desc};
-        let newArray = JSON.parse(JSON.stringify(this.state.transactions));
-        newArray = newArray.concat([transaction]);
-
-        this.setState({summary: newSummaryObject, transactions: newArray});
-    }
-
-    deleteTransaction = (index) => {
-        let amount = this.state.transactions[index].amount;
-        const medium = this.state.transactions[index].medium;
-        const ttype  = this.state.transactions[index].ttype;
-        if(ttype === CREDIT) { amount = amount * -1; }
-
-        let stateCash = this.state.summary.cash;
-        let stateBank = this.state.summary.bank;
-        let stateEwallet   = this.state.summary.ewallet;
-        if(medium === CASH) { stateCash = stateCash + amount; }
-        if(medium === BANK) { stateBank = stateBank + amount; }
-        if(medium === EWALLET) { stateEwallet = stateEwallet + amount; }
-
-        const newSummaryObject = { cash: stateCash, bank: stateBank, ewallet: stateEwallet };
-        let newArray = JSON.parse(JSON.stringify(this.state.transactions));
-        let dump = newArray.splice(index, 1);
-        console.log({dump});
-        this.setState({summary: newSummaryObject, transactions: newArray});
-    }
-
-    handleSubmit()
+    getAllData()
     {
-        const amount = parseInt(getID("amount").value);
-        const ttype = parseInt(radioInput("ttype").value);
-        const medium = parseInt(radioInput("medium").value);
-        const desc = getID("desc").value;
-        console.log(ttype);
+        fetch(`/expenses/summary/${this.props.id}`, {
+            method:'GET',
+            headers: commonHeaders
+        }).then((res) => res.json())
+          .then((data) => {
+              if(data.length !== 0)
+              {
+                  this.setState({
+                      summary: {
+                          cash: data[0].cash, bank: data[0].bank, ewallet: data[0].ewallet
+                      },
+                      transactions: this.state.transactions
+                  })
+              }
+          });
 
-        const newTransaction = { amount: amount, medium: medium, ttype: ttype, desc: desc };
-        this.conductTransaction(newTransaction);
-        setTimeout(()=>console.log(this.state), 1000)
+        fetch(`/expenses/transactions/${this.props.id}`, {
+            method:'GET',
+            headers: commonHeaders
+        }).then((res) => res.json())
+          .then((data) => {
+              if(data.length !== undefined)
+              {
+                  let newTransactionsArray = []
+
+                  for(let i = 0; i < data.length; i++)
+                  {
+                      let object = {
+                          transaction_id: data[i].transaction_id,
+                          amount: data[i].transaction_value,
+                          ttype: data[i].transaction_type,
+                          medium: data[i].transaction_mode,
+                          desc: data[i].description 
+                      }
+                      newTransactionsArray.push(object);
+                  }
+                  console.log(data);
+                  console.log(newTransactionsArray);
+                  this.setState({
+                      summary: this.state.summary,
+                      transactions: newTransactionsArray
+                  })
+              }
+          });
     }
 
     show = (id) => { getID(id).style.display="block"; }
     hide = (id) => { getID(id).style.display="none"; }
+
+    componentDidMount()
+    {
+        this.getAllData();
+    }
+
+    handleSubmit()
+    { 
+        const newObject = {
+            id : this.props.id,
+            value : parseInt(getID("amount").value),
+            type : parseInt(radioInput("ttype").value),
+            mode : parseInt(radioInput("medium").value),
+            description : getID("desc").value
+        }
+
+        let amount = parseInt(getID("amount").value);
+        let stateCash = this.state.summary.cash;
+        let stateBank = this.state.summary.bank;
+        let stateEwallet   = this.state.summary.ewallet;
+        if(newObject.type === DEBIT) { amount = amount * -1; }
+        if(newObject.mode === CASH) { stateCash = stateCash + amount; }
+        if(newObject.mode === BANK) { stateBank = stateBank + amount; }
+        if(newObject.mode === EWALLET) { stateEwallet = stateEwallet + amount; }
+
+        const newSummaryObject = { id : this.props.id, 
+                                   cash: stateCash, 
+                                   bank: stateBank, 
+                                   ewallet: stateEwallet, 
+                                   total: stateCash + stateBank + stateEwallet };
+        console.log(newSummaryObject);
+        
+        fetch('/expenses/transaction', {
+            method: 'POST',
+            headers: commonHeaders,
+            body: JSON.stringify(newObject)
+        }).then((res) => res.json()).then((data) => console.log(data));
+        
+        fetch('/expenses/summary', {
+            method: 'POST',
+            headers: commonHeaders,
+            body: JSON.stringify(newSummaryObject)
+        }).then((res) => res.json()).then((data) => console.log(data));
+
+        window.location.reload();
+    }
+
+    deleteButton(tid)
+    {
+        for(let i = 0; i < this.state.transactions.length; i++)
+        {
+            console.log(tid);
+            if(this.state.transactions[i].transaction_id === tid)
+            {
+                fetch('/expenses/transaction', {
+                    method: 'DELETE',
+                    headers: commonHeaders,
+                    body: JSON.stringify({transaction_id: tid})
+                }).then((res) => res.json()).then((data) => console.log(data));
+                console.log('Deleting');
+
+                let amount = this.state.transactions[i].amount
+                let stateCash = this.state.summary.cash;
+                let stateBank = this.state.summary.bank;
+                let stateEwallet   = this.state.summary.ewallet;
+                if(this.state.transactions[i].ttype === CREDIT) { amount = amount * -1; }
+                if(this.state.transactions[i].medium === CASH) { stateCash = stateCash + amount; }
+                if(this.state.transactions[i].medium === BANK) { stateBank = stateBank + amount; }
+                if(this.state.transactions[i].medium === EWALLET) { stateEwallet = stateEwallet + amount; }                
+                const newSummaryObject = { id : this.props.id, 
+                    cash: stateCash, 
+                    bank: stateBank, 
+                    ewallet: stateEwallet, 
+                    total: stateCash + stateBank + stateEwallet };
+                fetch('/expenses/summary', {
+                    method: 'POST',
+                    headers: commonHeaders,
+                    body: JSON.stringify(newSummaryObject)
+                }).then((res) => res.json()).then((data) => console.log(data));
+                break;
+            }
+        }
+        window.location.reload();
+    }
 
     render()
     {
@@ -158,7 +235,7 @@ class Expenses extends React.Component
                                         <td>{transaction.desc}</td>
                                         <td>{transaction.ttype}</td>
                                         <td>{transaction.medium}</td>
-                                        <td><button onClick={() => this.deleteTransaction(index)}>Delete</button></td>
+                                        <td><button onClick={() => this.deleteButton(transaction.transaction_id)}>Delete</button></td>
                                    </tr>
                                )
                            )}
@@ -170,6 +247,6 @@ class Expenses extends React.Component
             </div>
         )
     }
-};
+}
 
 export default Expenses;
