@@ -52,6 +52,22 @@ class Auth extends React.Component
                 document.getElementById("server_response").innerText = "Success!";
             }
         }
+
+        else 
+        {
+            let response = await fetch('/auth/login', {
+                method: 'POST',
+                headers: commonHeaders,
+                body: JSON.stringify({email, password})
+            });
+            let data = await response.json();
+            localStorage.setItem("token", data.token);
+            if(response.status === 200)
+            {
+                document.getElementById("server_response").innerText = "Success!";
+            }
+            window.location.reload();
+        }
     }
 
     render()
