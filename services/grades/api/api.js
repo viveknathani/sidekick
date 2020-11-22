@@ -15,9 +15,9 @@ function wait(time)
 
 module.exports = function(app)
 {
-    app.get('/api/v1/all', async (req, res) => 
+    app.get('/api/v1/all/:id', async (req, res) => 
     {
-        const { id } = req.body;
+        const id = req.params.id;
         let sqlQuery = `SELECT * FROM grades WHERE user_id=${id};`;
         let data;        
 
@@ -44,7 +44,7 @@ module.exports = function(app)
 
         await wait(100);
 
-        res.status(201).send('Test data added.');
+        res.status(201).send({message: 'Test data added.'});
     });
 
     app.put('/api/v1/test', async (req, res) => 
@@ -65,7 +65,7 @@ module.exports = function(app)
     app.delete('/api/v1/test', async (req, res) => 
     {
         const { grades_id } = req.body;
-        let sqlQuery = `DELETE FROM grades WHERE grades_id=${gradfes_id};`;
+        let sqlQuery = `DELETE FROM grades WHERE grades_id=${grades_id};`;
 
         connectDB.query(sqlQuery, (err, result) =>
         {
@@ -74,6 +74,6 @@ module.exports = function(app)
 
         await wait(100);        
 
-        res.status(202).send('Test data deleted.');
+        res.status(202).send({message: 'Test data deleted.'});
     });
 }
