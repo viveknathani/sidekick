@@ -13,8 +13,7 @@ function getAll(id)
         it('Should return 200.', function(done)
         {
             REQUEST
-                .get(ALL)
-                .send({ id })
+                .get(ALL + `/${id}`)
                 .expect((res) => { console.log(res.body); } )
                 .end((err, res) => { if(err){ throw err;} else { done(); } });
         });
