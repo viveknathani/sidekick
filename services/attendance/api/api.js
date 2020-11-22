@@ -15,9 +15,9 @@ function wait(time)
 
 module.exports = function(app)
 {
-    app.get('/api/v1/all', async (req, res) => 
+    app.get('/api/v1/all/:id', async (req, res) => 
     {
-        const { id } = req.body;
+        const id = req.params.id;
         let sqlQuery = `SELECT * FROM attendance WHERE user_id=${id};`;
         let data;        
 
