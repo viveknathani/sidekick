@@ -15,9 +15,9 @@ function wait(time)
 
 module.exports = function(app)
 {
-    app.get('/api/v1/transactions', async (req, res) => 
+    app.get('/api/v1/transactions/:id', async (req, res) => 
     {
-        const { id } = req.body;
+        const id = req.params.id;
         let sqlQuery = `SELECT * FROM transactions WHERE user_id=${id};`
         let data;        
 
@@ -32,9 +32,9 @@ module.exports = function(app)
         res.status(200).send(data);
     });
 
-    app.get('/api/v1/summary', async (req, res) => 
+    app.get('/api/v1/summary/:id', async (req, res) => 
     {
-        const { id } = req.body;
+        const id = req.params.id;
         let sqlQuery = `SELECT * FROM summary WHERE user_id=${id};`;
         let data;        
 
@@ -82,7 +82,7 @@ module.exports = function(app)
     app.delete('/api/v1/transaction', async (req, res) => 
     {
         const { transaction_id } = req.body;
-        let sqlQuery = `DELETE FROM transactions WHERE transaction_id=${id};`;
+        let sqlQuery = `DELETE FROM transactions WHERE transaction_id=${transaction_id};`;
 
         connectDB.query(sqlQuery, (err, result) =>
         {

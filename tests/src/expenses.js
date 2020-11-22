@@ -14,8 +14,7 @@ function getAllTrans(id)
         it('Should return 200.', function(done)
         {
             REQUEST
-                .get(TRANSACTIONS)
-                .send({ id })
+                .get(TRANSACTIONS + `/${id}`)
                 .expect((res) => { console.log(res.body); } )
                 .end((err, res) => { if(err){ throw err;} else { done(); } });
         });
@@ -29,8 +28,7 @@ function getSummary(id)
         it('Should return 200.', function(done)
         {
             REQUEST
-                .get(SUMMARY)
-                .send({ id })
+                .get(SUMMARY + `/${id}`)
                 .expect((res) => { console.log(res.body); })
                 .end((err, res) => { if(err){ throw err;} else { done(); } });
         });
