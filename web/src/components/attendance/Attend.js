@@ -22,6 +22,7 @@ function toFixed(value, precision)
     let power = Math.pow(10, precision || 0);
     return String(Math.round(value * power) / power);
 }
+const commonHeaders  =  { 'Content-Type': 'application/json' }
 
 class Attend extends React.Component 
 {
@@ -35,6 +36,7 @@ class Attend extends React.Component
         this.handleSubmit = this.handleSubmit.bind(this);
         this.addData = this.addData.bind(this);
         this.deleteData = this.deleteData.bind(this);
+        this.getData = this.getData.bind(this);
         this.calculatePercent = this.calculatePercent.bind(this);
         this.show = this.show.bind(this);
         this.hide = this.hide.bind(this);
@@ -52,27 +54,65 @@ class Attend extends React.Component
         return percent;
     }
 
-    addData = (data) => {
-        console.log(data);
-        let newArray = JSON.parse(JSON.stringify(this.state.data));
-        newArray = newArray.concat([data]);
-        let newPercent = this.calculatePercent(newArray);
-        this.setState({data: newArray, percent: newPercent});
+    getData = () => {
+        fetch(`/attendance/all/${this.props.id}`, {
+            method: 'GET',
+            headers: commonHeaders
+        }).then((res) => res.json())
+        .then((data) => {
+            if(data.length !== 0)
+            {
+               let newArray = []; 
+               for(let i = 0; i < data.length; i++)
+               {
+                   let newObject = {
+                    id: data[i].user_id, 
+                    subject_name: data[i].subject_name, 
+                    date: data[i].date, 
+                    status: data[i].status, 
+                    attendance_id : data[i].attendance_id
+                   }
+                   newArray.push(newObject);
+               }
+
+               this.setState({
+                   percent: this.calculatePercent(newArray),
+                   data: newArray
+               })
+            }
+        });
     }
 
-    deleteData = (index) => {
-        let newArray = JSON.parse(JSON.stringify(this.state.data));
-        let dump = newArray.splice(index, 1);
-        console.log({dump});
-        let newPercent = this.calculatePercent(newArray);
-        this.setState({data: newArray, percent: newPercent});
+    componentDidMount()
+    {
+        this.getData();
+    }
+
+    addData = (data) => {
+        console.log(data);
+        fetch('/attendance/data', {
+            method: 'POST',
+            headers: commonHeaders,
+            body: JSON.stringify(data)
+        }).then((res) => res.json()).then((data) => console.log(data));
+        window.location.reload();
+    }
+
+    deleteData = (attendance_id) => {
+        fetch('/attendance/data', {
+            method: 'DELETE',
+            headers: commonHeaders,
+            body: JSON.stringify({attendance_id})
+        }).then((res) => res.json()).then((data) => console.log(data));
+        window.location.reload();
     }
 
     handleSubmit = () => {
+        const id =  this.props.id;
         const date = getID("date").value;
-        const subject = getID("subject").value;
+        const subject_name = getID("subject").value;
         const status = parseInt(radioInput("status").value);
-        const data = { date: date, subject: subject, status: status };
+        const data = { id: id, date: date, subject_name: subject_name, status: status };
         this.addData(data);
     }
 
@@ -123,9 +163,9 @@ class Attend extends React.Component
                                     <tr>
                                         <td>{index}</td>
                                         <td>{datum.date}</td>
-                                        <td>{datum.subject}</td>
+                                        <td>{datum.subject_name}</td>
                                         <td>{datum.status}</td>
-                                        <td><button onClick={() => this.deleteData(index)}>Delete</button></td>
+                                        <td><button onClick={() => this.deleteData(datum.attendance_id)}>Delete</button></td>
                                     </tr>
                                 ))}
                             </tbody>
