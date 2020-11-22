@@ -12,7 +12,7 @@ sidekick is a web application that can help college students keep track of their
 
 ### Setup
 Each microservice is built independently and runs on its separate server.
-The API Gateway has its own dedicated server too.
+The API-Gateway has its own dedicated server too.
 And lastly, during the development phase, our frontend needs a server too.
 
 Go to the root directory of each microservice and create a .env file with the following setup.
