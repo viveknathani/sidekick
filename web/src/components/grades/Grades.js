@@ -3,6 +3,8 @@ import './Grades.css';
 
 function getID(id) { return document.getElementById(id); }
 
+const commonHeaders  =  { 'Content-Type': 'application/json' }
+
 class Grades extends React.Component
 {
     constructor(props)
@@ -18,33 +20,73 @@ class Grades extends React.Component
         this.checkStatus = this.checkStatus.bind(this);
         this.show = this.show.bind(this);
         this.hide = this.hide.bind(this);
+        this.getData = this.getData.bind(this);
     }
 
     checkStatus(array)
     {
         for(let i = 0; i < array.length; i++)
         {
-            let num = array[i].scoredMarks;
-            let dem = array[i].maxMarks;
+            let num = array[i].scored_marks;
+            let dem = array[i].max_marks;
             let percent = (num / dem) * 100;
             if(percent < 40) { return true; }
         }
         return false;
     }
 
-    addData = (data) => {
-        let newArray = JSON.parse(JSON.stringify(this.state.data));
-        newArray = newArray.concat([data]);
-        let newWorry = this.checkStatus(newArray);
-        this.setState({data: newArray, worry: newWorry});
+    getData = () => {
+        fetch(`/grades/all/${this.props.id}`, {
+            method: 'GET',
+            headers: commonHeaders
+        }).then((res) => res.json())
+        .then((data) => {
+            if(data.length !== 0)
+            {
+               let newArray = []; 
+               for(let i = 0; i < data.length; i++)
+               {
+                   let newObject = {
+                    id: data[i].user_id, 
+                    subject_name: data[i].subject_name, 
+                    date: data[i].date, 
+                    max_marks: data[i].max_marks,
+                    scored_marks : data[i].scored_marks, 
+                    grades_id : data[i].grades_id
+                   }
+                   newArray.push(newObject);
+               }
+
+               this.setState({
+                   data: newArray,
+                   worry: this.checkStatus(newArray)
+               })
+            }
+        });
     }
 
-    deleteData = (index) => {
-        let newArray = JSON.parse(JSON.stringify(this.state.data));
-        let dump = newArray.splice(index, 1);
-        console.log(dump);
-        let newWorry = this.checkStatus(newArray);
-        this.setState({data: newArray, worry: newWorry});
+    componentDidMount()
+    {
+        this.getData();
+    }
+
+    addData = (data) => {
+        console.log(data);
+        fetch('/grades/test', {
+            method: 'POST',
+            headers: commonHeaders,
+            body: JSON.stringify(data)
+        }).then((res) => res.json()).then((data) => console.log(data));
+        window.location.reload();
+    }
+
+    deleteData = (grades_id) => {
+        fetch('/grades/test', {
+            method: 'DELETE',
+            headers: commonHeaders,
+            body: JSON.stringify({grades_id})
+        }).then((res) => res.json()).then((data) => console.log(data));
+        window.location.reload();
     }
 
     handleSubmit = () => {
@@ -52,7 +94,7 @@ class Grades extends React.Component
         const subject = getID("subject").value;
         const maxMarks = parseFloat(getID("max_marks").value);
         const scoredMarks = parseFloat(getID("scored_marks").value);
-        const data = { date: date, subject: subject, maxMarks: maxMarks, scoredMarks: scoredMarks };
+        const data = { id: this.props.id, date: date, subject_name: subject, max_marks: maxMarks, scored_marks: scoredMarks };
         this.addData(data);
     }
 
@@ -107,10 +149,10 @@ class Grades extends React.Component
                                     <tr key={index}>
                                         <td>{index}</td>
                                         <td>{datum.date}</td>
-                                        <td>{datum.subject}</td>
-                                        <td>{datum.scoredMarks}</td>
-                                        <td>{datum.maxMarks}</td>
-                                        <td><button onClick={() => this.deleteData(index)}>Delete</button></td>
+                                        <td>{datum.subject_name}</td>
+                                        <td>{datum.scored_marks}</td>
+                                        <td>{datum.max_marks}</td>
+                                        <td><button onClick={() => this.deleteData(datum.grades_id)}>Delete</button></td>
                                     </tr>
                                 ))}
                             </tbody>
