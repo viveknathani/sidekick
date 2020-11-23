@@ -2,10 +2,10 @@
 
 require('dotenv').config();
 
-const PORT = process.env.PORT;
+const PORT    = process.env.PORT;
 const express = require('express');
-const app = express();
-const paths = require('./api/api');
+const app     = express();
+const paths   = require('./api/api');
 app.use(express.json());
 
 paths(app);
