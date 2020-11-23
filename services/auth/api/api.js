@@ -1,10 +1,10 @@
 'use strict';
 
 const connectDB = require('../db/handle');
-const bcrypt = require('bcrypt');
+const bcrypt    = require('bcrypt');
 const validator = require('./valid');
-const jwt = require('jsonwebtoken');
-const AGE = 3 * 24 * 60 * 60;
+const jwt       = require('jsonwebtoken');
+const AGE       = 3 * 24 * 60 * 60;
 
 connectDB.connect(function(err)
 {
