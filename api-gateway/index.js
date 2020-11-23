@@ -1,5 +1,11 @@
 'use strict';
 
+/*
+    This is the entry point of the API-Gateway.
+    All requests made by client are proxied through this
+    application. 
+*/
+
 require('dotenv').config();
 
 const express    = require('express');
